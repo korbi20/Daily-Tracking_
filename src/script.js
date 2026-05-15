@@ -42,34 +42,43 @@ const daysInMonth =
         0
     ).getDate();
 
+const firstDayIndex =
+    (new Date(CURRENT_YEAR, CURRENT_MONTH, 1).getDay() + 6) % 7;
+
+const monthWeeks =
+    Math.ceil((firstDayIndex + daysInMonth) / 7);
+
+monthGrid.style.setProperty(
+    '--month-weeks',
+    monthWeeks
+);
+
 /* =========================================================
    MONTH GRID BUILD
 ========================================================= */
 
-for(let i = 1; i <= 42; i++){
+for(let i = 0; i < monthWeeks * 7; i++){
 
     const cell =
         document.createElement('div');
 
-    const level =
-        randomLevel();
+    const dayNumber =
+        i - firstDayIndex + 1;
 
-    cell.className =
-        `cell l${level}`;
+    const isRealDay =
+        dayNumber >= 1 && dayNumber <= daysInMonth;
 
-    /* ---------------- REAL DAYS ---------------- */
+    if(isRealDay){
 
-    if(i <= daysInMonth){
+        cell.className =
+            `cell l${randomLevel()}`;
 
-        cell.dataset.day = i;
+        cell.dataset.day = dayNumber;
     }
-
-    /* ---------------- FADED DAYS ---------------- */
 
     else{
 
-        cell.style.opacity = '.18';
-        cell.style.filter  = 'saturate(.2)';
+        cell.className = 'cell cell-empty';
     }
 
     monthGrid.appendChild(cell);
@@ -82,13 +91,43 @@ for(let i = 1; i <= 42; i++){
 const yearGrid =
     document.getElementById('year-grid');
 
-for(let i = 0; i < 371; i++){
+const daysInYear =
+    new Date(CURRENT_YEAR, 12, 0).getDate();
+
+const yearFirstDayIndex =
+    (new Date(CURRENT_YEAR, 0, 1).getDay() + 6) % 7;
+
+const yearWeeks =
+    Math.ceil((yearFirstDayIndex + daysInYear) / 7);
+
+yearGrid.style.setProperty(
+    '--year-weeks',
+    yearWeeks
+);
+
+for(let i = 0; i < yearWeeks * 7; i++){
+
+    const dayOfYear =
+        i - yearFirstDayIndex + 1;
+
+    const isRealDay =
+        dayOfYear >= 1 && dayOfYear <= daysInYear;
 
     const cell =
         document.createElement('div');
 
-    cell.className =
-        `year-cell l${randomLevel()}`;
+    if(isRealDay){
+
+        cell.className =
+            `year-cell l${randomLevel()}`;
+
+        cell.dataset.dayOfYear = dayOfYear;
+    }
+
+    else{
+
+        cell.className = 'year-cell cell-empty';
+    }
 
     yearGrid.appendChild(cell);
 }
@@ -106,11 +145,29 @@ const views =
 const pill =
     document.querySelector('.toggle-pill');
 
-buttons.forEach((button, index) => {
+function activateView(target){
+
+    views.forEach(view =>
+        view.classList.remove('active')
+    );
+
+    const targetView =
+        document.getElementById(`${target}-view`);
+
+    if(targetView){
+        targetView.classList.add('active');
+    }
+}
+
+function movePillTo(button){
+
+    pill.style.transform =
+        `translateX(${button.offsetLeft - 4}px)`;
+}
+
+buttons.forEach(button => {
 
     button.addEventListener('click', () => {
-
-        /* ---------------- ACTIVE BTN ---------------- */
 
         buttons.forEach(btn =>
             btn.classList.remove('active')
@@ -118,25 +175,19 @@ buttons.forEach((button, index) => {
 
         button.classList.add('active');
 
-        /* ---------------- MOVE PILL ---------------- */
-
-        pill.style.transform =
-            `translateX(${index * 90}px)`;
-
-        /* ---------------- TARGET VIEW ---------------- */
-
-        const target =
-            button.dataset.view;
-
-        views.forEach(view =>
-            view.classList.remove('active')
-        );
-
-        const targetView =
-            document.getElementById(
-                `${target}-view`
-            );
-
-        targetView.classList.add('active');
+        movePillTo(button);
+        activateView(button.dataset.view);
     });
 });
+
+/* init active view + pill */
+const activeButton =
+    document.querySelector('.toggle button.active') || buttons[0];
+
+if(activeButton){
+
+    activeButton.classList.add('active');
+
+    movePillTo(activeButton);
+    activateView(activeButton.dataset.view);
+}
