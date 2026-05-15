@@ -58,6 +58,7 @@ body{
     position:absolute;
     top:40px;
     right:40px;
+    z-index:30;
 }
 
 /* ---------------- TOGGLE ---------------- */
@@ -140,7 +141,7 @@ body{
     position:absolute;
     inset:0;
 
-    display:flex;
+    display:none;
     justify-content:center;
     align-items:center;
 
@@ -162,6 +163,7 @@ body{
 
 .view.active{
 
+    display:flex;
     opacity:1;
 
     transform:
@@ -254,7 +256,7 @@ body{
     display:grid;
 
     grid-template-columns:
-        repeat(6, var(--cell));
+        repeat(var(--month-weeks, 6), var(--cell));
 
     grid-template-rows:
         repeat(7, var(--cell));
@@ -321,7 +323,7 @@ body{
     display:grid;
 
     grid-template-columns:
-        repeat(53, 12px);
+        repeat(var(--year-weeks, 53), 12px);
 
     grid-template-rows:
         repeat(7, 12px);
@@ -370,6 +372,21 @@ body{
 
     box-shadow:
         0 0 12px rgba(255,255,255,.06);
+}
+
+.cell-empty{
+
+    background:transparent;
+    opacity:.28;
+
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:none;
+}
+
+.cell-empty:hover{
+
+    transform:none;
+    box-shadow:none;
 }
 
 /* =========================================================
