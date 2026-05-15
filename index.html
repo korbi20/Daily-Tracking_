@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily-Tracker_</title>
+    <style>
+        :root {
+            --bg: #323437;
+            --main: #e2b714;
+            --sub: #646669;
+            --subAlt: #2c2e31;
+            --text: #d1d0c5;
+            --error: #ca4754;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 55px 80px;
+            user-select: none;
+            transition: background-color 0.25s ease, color 0.25s ease;
+            overflow: hidden;
+        }
+
+        /* ── HEADER ── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-size: 0.85rem;
+            color: var(--text);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .accent {
+            display: inline-block;
+            width: 8.5px;
+            height: 3.05px;
+            background-color: var(--main);
+            margin-left: 2px;
+            vertical-align: baseline;
+        }
+
+        /* ── VIEW TOGGLE ── */
+        .view-toggle {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--sub);
+            background: none;
+            border: 1px solid transparent;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .toggle-btn.active {
+            color: var(--main);
+            border-color: var(--main);
+        }
+
+        .toggle-btn:hover:not(.active) {
+            color: var(--text);
+            border-color: var(--subAlt);
+        }
+
+        /* ── MAIN ── */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        /* ── MONTH LABEL ── */
+        .period-nav {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--sub);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.2s;
+            padding: 4px 8px;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover { color: var(--main); }
+
+        .period-label {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--sub);
+            min-width: 130px;
+            text-align: center;
+        }
+
+        /* ── GRID WRAPPER ── */
+        .grid-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* ── MONTH GRID ── */
+        .month-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .weekday-labels {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 2px;
+        }
+
+        .weekday-label {
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            color: var(--sub);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .month-weeks {
+            display: flex;
+            gap: 5px;
+        }
+
+        .week-col {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        /* ── YEAR GRID ── */
+        .year-grid {
+            display: flex;
+            gap: 3px;
+        }
+
+        .year-week-col {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .month-labels-row {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 4px;
+            padding-left: 0;
+        }
+
+        .month-label-cell {
+            font-size: 0.55rem;
+            letter-spacing: 1px;
+            color: var(--sub);
+            text-transform: uppercase;
+            width: 11px;
+            text-align: left;
+            overflow: visible;
+            white-space: nowrap;
+        }
+
+        /* ── CELLS ── */
+        .cell {
+            border-radius: 3px;
+            background: var(--subAlt);
+            cursor: pointer;
+            transition: transform 0.1s ease, opacity 0.15s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .cell:hover { transform: scale(1.25); }
+
+        /* Month cell size */
+        .month-view .cell { width: 32px; height: 32px; border-radius: 6px; }
+
+        /* Year cell size */
+        .year-view .cell { width: 11px; height: 11px; border-radius: 2px; }
+
+        .cell.empty { background: transparent; cursor: default; }
+        .cell.empty:hover { transform: none; }
+
+        /* Intensity levels */
+        .cell.score-1 { background: var(--main); opacity: 0.28; }
+        .cell.score-2 { background: var(--main); opacity: 0.52; }
+        .cell.score-3 { background: var(--main); opacity: 0.76; }
+        .cell.score-4 { background: var(--main); opacity: 1; }
+
+        .cell.today {
+            box-shadow: 0 0 0 1.5px var(--main);
+        }
+
+        /* ── TOOLTIP ── */
+        .tooltip {
+            position: fixed;
+            background: var(--subAlt);
+            border: 1px solid var(--sub);
+            color: var(--text);
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: 100;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        .tooltip.visible { opacity: 1; }
+
+        /* ── STATS ── */
+        .stats {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--main);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            color: var(--sub);
+            text-transform: uppercase;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 30px;
+            background: var(--subAlt);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            color: var(--sub);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding-bottom: 10px;
+        }
+
+        .footer-icon {
+            width: 20px;
+            height: 20px;
+            transition: color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .footer-icon:hover { color: var(--main); }
+
+        #theme-name {
+            font-size: 0.75rem;
+            color: var(--sub);
+        }
+
+        /* ── RESET OVERLAY (Konami) ── */
+        #reset-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        #reset-overlay.visible { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .reset-box {
+            background: var(--bg);
+            border: 1px solid var(--error);
+            border-radius: 12px;
+            padding: 32px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .reset-title {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: var(--error);
+            text-transform: uppercase;
+        }
+
+        .reset-sub {
+            font-size: 0.75rem;
+            color: var(--sub);
+            letter-spacing: 1px;
+        }
+
+        .reset-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .reset-btn {
+            font-family: inherit;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid;
+        }
+
+        .reset-btn.confirm {
+            background: var(--error);
+            border-color: var(--error);
+            color: #fff;
+        }
+
+        .reset-btn.confirm:hover { opacity: 0.8; }
+
+        .reset-btn.cancel {
+            background: none;
+            border-color: var(--sub);
+            color: var(--sub);
+        }
+
+        .reset-btn.cancel:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Daily-Tracker<span class="accent"></span></h1>
+    <div class="view-toggle">
+        <button class="toggle-btn active" id="btn-month">Month</button>
+        <button class="toggle-btn" id="btn-year">Year</button>
+    </div>
+</header>
+
+<main>
+    <div class="period-nav">
+        <button class="nav-btn" id="nav-prev">←</button>
+        <div class="period-label" id="period-label">—</div>
+        <button class="nav-btn" id="nav-next">→</button>
+    </div>
+
+    <div class="grid-wrapper" id="grid-wrapper"></div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value" id="stat-streak">0</div>
+            <div class="stat-label">Streak</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Total Days</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+            <div class="stat-value" id="stat-longest">0</div>
+            <div class="stat-label">Longest</div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <svg id="theme-toggle" class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <title>Theme switch</title>
+        <path d="M11 17a4 4 0 0 1-8 0V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2Z"/>
+        <path d="M16.7 13H19a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H7"/>
+        <path d="M 7 17h.01"/>
+        <path d="m11 8 2.3-2.3a2.4 2.4 0 0 1 3.404.004L18.6 7.6a2.4 2.4 0 0 1 .026 3.434L9.9 19.8"/>
+    </svg>
+    <div id="theme-name">Loading...</div>
+</footer>
+
+<div class="tooltip" id="tooltip"></div>
+
+<!-- Reset Overlay (Konami-Code) -->
+<div id="reset-overlay">
+    <div class="reset-box">
+        <div class="reset-title">⚠ Reset all data</div>
+        <div class="reset-sub">Alle Tracking-Daten werden gelöscht.<br>Diese Aktion kann nicht rückgängig gemacht werden.</div>
+        <div class="reset-actions">
+            <button class="reset-btn confirm" id="reset-confirm">Reset</button>
+            <button class="reset-btn cancel" id="reset-cancel">Abbrechen</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import {
+        recordVisit, getData, dayScore,
+        daysInMonth, daysInYear,
+        calcStreak, calcLongestStreak, calcTotalDays,
+        resetData, todayKey
+    } from './src/tracker.js';
+
+    // ── STATE ──
+    const today = new Date();
+    let view = 'month'; // 'month' | 'year'
+    let offset = 0;     // months or years offset from now
+    let trackerData = {};
+
+    // ── THEMES ──
+    let themes = [];
+    let currentThemeIndex = 0;
+
+    async function initThemes() {
+        try {
+            const res = await fetch('src/themes.json');
+            themes = await res.json();
+            currentThemeIndex = parseInt(localStorage.getItem('tracker-themeIndex')) || 0;
+            applyTheme(currentThemeIndex);
+        } catch (e) {
+            console.error('Themes failed:', e);
+        }
+    }
+
+    function applyTheme(index) {
+        const theme = themes[index];
+        if (!theme) return;
+        Object.keys(theme).forEach(key => {
+            if (key !== 'name') document.documentElement.style.setProperty(`--${key}`, theme[key]);
+        });
+        const nameEl = document.getElementById('theme-name');
+        if (nameEl) nameEl.textContent = theme.name;
+        localStorage.setItem('tracker-themeIndex', index);
+    }
+
+    document.getElementById('theme-toggle').onclick = () => {
+        if (!themes.length) return;
+        currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+        applyTheme(currentThemeIndex);
+    };
+
+    // ── TOOLTIP ──
+    const tooltip = document.getElementById('tooltip');
+
+    function showTooltip(e, text) {
+        tooltip.textContent = text;
+        tooltip.classList.add('visible');
+        moveTooltip(e);
+    }
+
+    function moveTooltip(e) {
+        tooltip.style.left = (e.clientX + 14) + 'px';
+        tooltip.style.top  = (e.clientY - 28) + 'px';
+    }
+
+    function hideTooltip() {
+        tooltip.classList.remove('visible');
+    }
+
+    // ── PERIOD HELPERS ──
+    function currentPeriod() {
+        const d = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+        return { year: d.getFullYear(), month: d.getMonth() + 1 };
+    }
+
+    function periodLabel() {
+        if (view === 'year') {
+            return String(today.getFullYear() + offset);
+        }
+        const { year, month } = currentPeriod();
+        return new Date(year, month - 1, 1)
+            .toLocaleString('de-DE', { month: 'long', year: 'numeric' });
+    }
+
+    // ── RENDER ──
+    function render() {
+        document.getElementById('period-label').textContent = periodLabel();
+        view === 'month' ? renderMonth() : renderYear();
+        renderStats();
+    }
+
+    function makeCell(dateKey, sizeClass) {
+        const cell = document.createElement('div');
+        cell.className = `cell ${sizeClass}`;
+
+        const slots = trackerData[dateKey];
+        const score = dayScore(slots);
+        if (score > 0) cell.classList.add(`score-${score}`);
+        if (dateKey === todayKey()) cell.classList.add('today');
+
+        const active = slots ? slots.reduce((a, b) => a + b, 0) : 0;
+        const label = active > 0
+            ? `${dateKey} — ${active}h aktiv`
+            : `${dateKey} — kein Besuch`;
+
+        cell.addEventListener('mousemove', e => { showTooltip(e, label); moveTooltip(e); });
+        cell.addEventListener('mouseleave', hideTooltip);
+
+        return cell;
+    }
+
+    function renderMonth() {
+        const wrapper = document.getElementById('grid-wrapper');
+        wrapper.innerHTML = '';
+        wrapper.className = 'grid-wrapper month-view';
+
+        const { year, month } = currentPeriod();
+        const days = daysInMonth(`${year}-${String(month).padStart(2, '0')}`);
+
+        // Weekday labels (Mo–So)
+        const labels = document.createElement('div');
+        labels.className = 'weekday-labels';
+        ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach(d => {
+            const l = document.createElement('div');
+            l.className = 'weekday-label';
+            l.textContent = d;
+            labels.appendChild(l);
+        });
+        wrapper.appendChild(labels);
+
+        // Grid: rows = weeks, cols = weekdays
+        const grid = document.createElement('div');
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+        grid.style.gap = '5px';
+
+        // First day offset (Mo=0)
+        const firstDay = new Date(year, month - 1, 1).getDay();
+        const offset = firstDay === 0 ? 6 : firstDay - 1;
+
+        for (let i = 0; i < offset; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'cell empty';
+            grid.appendChild(empty);
+        }
+
+        days.forEach(dateKey => {
+            grid.appendChild(makeCell(dateKey, ''));
+        });
+
+        wrapper.appendChild(grid);
+    }
+
+    function renderYear() {
+        const wrapper = document.getElementById('grid-wrapper');
+        wrapper.innerHTML = '';
+        wrapper.className = 'grid-wrapper year-view';
+
+        const year = today.getFullYear() + offset;
+        const days = daysInYear(year);
+
+        // Build week columns
+        const weeksContainer = document.createElement('div');
+        weeksContainer.className = 'year-grid';
+
+        // Month label row above
+        const monthRow = document.createElement('div');
+        monthRow.className = 'month-labels-row';
+
+        // We'll add month labels by tracking which week each month starts
+        let weekCells = [];
+        let currentWeek = [];
+        let weekIndex = 0;
+        let monthStartWeeks = {};
+
+        // Pad to Monday
+        const firstDay = new Date(year, 0, 1).getDay();
+        const padDays = firstDay === 0 ? 6 : firstDay - 1;
+        for (let p = 0; p < padDays; p++) currentWeek.push(null);
+
+        days.forEach((dateKey, i) => {
+            const d = new Date(dateKey);
+            if (d.getDate() === 1) {
+                monthStartWeeks[weekIndex] = d.toLocaleString('de-DE', { month: 'short' });
+            }
+            currentWeek.push(dateKey);
+            if (currentWeek.length === 7) {
+                weekCells.push(currentWeek);
+                currentWeek = [];
+                weekIndex++;
+            }
+        });
+        if (currentWeek.length) {
+            while (currentWeek.length < 7) currentWeek.push(null);
+            weekCells.push(currentWeek);
+        }
+
+        // Month label placeholders (one per week column)
+        weekCells.forEach((_, wi) => {
+            const lbl = document.createElement('div');
+            lbl.className = 'month-label-cell';
+            lbl.textContent = monthStartWeeks[wi] || '';
+            monthRow.appendChild(lbl);
+        });
+
+        wrapper.appendChild(monthRow);
+
+        // Week columns
+        weekCells.forEach(week => {
+            const col = document.createElement('div');
+            col.className = 'year-week-col';
+            week.forEach(dateKey => {
+                if (!dateKey) {
+                    const empty = document.createElement('div');
+                    empty.className = 'cell empty year-view';
+                    col.appendChild(empty);
+                } else {
+                    col.appendChild(makeCell(dateKey, ''));
+                }
+            });
+            weeksContainer.appendChild(col);
+        });
+
+        wrapper.appendChild(weeksContainer);
+    }
+
+    function renderStats() {
+        document.getElementById('stat-streak').textContent  = calcStreak(trackerData);
+        document.getElementById('stat-total').textContent   = calcTotalDays(trackerData);
+        document.getElementById('stat-longest').textContent = calcLongestStreak(trackerData);
+    }
+
+    // ── VIEW TOGGLE ──
+    document.getElementById('btn-month').onclick = () => {
+        view = 'month'; offset = 0;
+        document.getElementById('btn-month').classList.add('active');
+        document.getElementById('btn-year').classList.remove('active');
+        render();
+    };
+
+    document.getElementById('btn-year').onclick = () => {
+        view = 'year'; offset = 0;
+        document.getElementById('btn-year').classList.add('active');
+        document.getElementById('btn-month').classList.remove('active');
+        render();
+    };
+
+    // ── NAV ──
+    document.getElementById('nav-prev').onclick = () => { offset--; render(); };
+    document.getElementById('nav-next').onclick = () => { offset++; render(); };
+
+    // ── KONAMI CODE ──
+    const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight'];
+    let konamiPos = 0;
+
+    document.addEventListener('keydown', e => {
+        if (e.key === KONAMI[konamiPos]) {
+            konamiPos++;
+            if (konamiPos === KONAMI.length) {
+                konamiPos = 0;
+                document.getElementById('reset-overlay').classList.add('visible');
+            }
+        } else {
+            konamiPos = 0;
+        }
+    });
+
+    document.getElementById('reset-confirm').onclick = async () => {
+        await resetData();
+        trackerData = {};
+        document.getElementById('reset-overlay').classList.remove('visible');
+        render();
+    };
+
+    document.getElementById('reset-cancel').onclick = () => {
+        document.getElementById('reset-overlay').classList.remove('visible');
+    };
+
+    // ── INIT ──
+    async function init() {
+        await initThemes();
+        trackerData = await recordVisit();
+        render();
+    }
+
+    init();
+</script>
+</body>
+</html>
