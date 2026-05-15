@@ -59,11 +59,17 @@ monthGrid.style.setProperty(
 
 for(let i = 0; i < monthWeeks * 7; i++){
 
+    const weekdayRow =
+        Math.floor(i / monthWeeks);
+
+    const weekColumn =
+        i % monthWeeks;
+
     const cell =
         document.createElement('div');
 
     const dayNumber =
-        i - firstDayIndex + 1;
+        weekColumn * 7 + weekdayRow - firstDayIndex + 1;
 
     const isRealDay =
         dayNumber >= 1 && dayNumber <= daysInMonth;
@@ -92,7 +98,12 @@ const yearGrid =
     document.getElementById('year-grid');
 
 const daysInYear =
-    new Date(CURRENT_YEAR, 12, 0).getDate();
+    Math.round(
+        (
+            new Date(CURRENT_YEAR + 1, 0, 1) -
+            new Date(CURRENT_YEAR, 0, 1)
+        ) / (1000 * 60 * 60 * 24)
+    );
 
 const yearFirstDayIndex =
     (new Date(CURRENT_YEAR, 0, 1).getDay() + 6) % 7;
@@ -107,8 +118,14 @@ yearGrid.style.setProperty(
 
 for(let i = 0; i < yearWeeks * 7; i++){
 
+    const weekdayRow =
+        Math.floor(i / yearWeeks);
+
+    const weekColumn =
+        i % yearWeeks;
+
     const dayOfYear =
-        i - yearFirstDayIndex + 1;
+        weekColumn * 7 + weekdayRow - yearFirstDayIndex + 1;
 
     const isRealDay =
         dayOfYear >= 1 && dayOfYear <= daysInYear;
