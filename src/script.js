@@ -2,8 +2,9 @@
    CONFIG
 ========================================================= */
 
-const CURRENT_YEAR  = 2026;
-const CURRENT_MONTH = 4; // Mai = 4
+const NOW = new Date();
+const CURRENT_YEAR  = NOW.getFullYear();
+const CURRENT_MONTH = NOW.getMonth();
 
 /* =========================================================
    HELPERS
