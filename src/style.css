@@ -92,6 +92,7 @@ body{
     border-radius:999px;
 
     background:rgba(255,255,255,.08);
+    pointer-events:none;
 
     transition:
         transform .28s cubic-bezier(.2,.8,.2,1);
@@ -303,6 +304,7 @@ body{
 
     display:flex;
     gap:14px;
+    margin-top:8px;
 }
 
 .year-days{

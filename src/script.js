@@ -145,11 +145,29 @@ const views =
 const pill =
     document.querySelector('.toggle-pill');
 
-buttons.forEach((button, index) => {
+function activateView(target){
+
+    views.forEach(view =>
+        view.classList.remove('active')
+    );
+
+    const targetView =
+        document.getElementById(`${target}-view`);
+
+    if(targetView){
+        targetView.classList.add('active');
+    }
+}
+
+function movePillTo(button){
+
+    pill.style.transform =
+        `translateX(${button.offsetLeft - 4}px)`;
+}
+
+buttons.forEach(button => {
 
     button.addEventListener('click', () => {
-
-        /* ---------------- ACTIVE BTN ---------------- */
 
         buttons.forEach(btn =>
             btn.classList.remove('active')
@@ -157,31 +175,19 @@ buttons.forEach((button, index) => {
 
         button.classList.add('active');
 
-        /* ---------------- MOVE PILL ---------------- */
-
-        pill.style.transform =
-            `translateX(${button.offsetLeft - 4}px)`;
-
-        /* ---------------- TARGET VIEW ---------------- */
-
-        const target =
-            button.dataset.view;
-
-        views.forEach(view =>
-            view.classList.remove('active')
-        );
-
-        const targetView =
-            document.getElementById(
-                `${target}-view`
-            );
-
-        targetView.classList.add('active');
+        movePillTo(button);
+        activateView(button.dataset.view);
     });
 });
 
-/* init pill alignment */
-const activeButton = document.querySelector('.toggle button.active');
+/* init active view + pill */
+const activeButton =
+    document.querySelector('.toggle button.active') || buttons[0];
+
 if(activeButton){
-    pill.style.transform = `translateX(${activeButton.offsetLeft - 4}px)`;
+
+    activeButton.classList.add('active');
+
+    movePillTo(activeButton);
+    activateView(activeButton.dataset.view);
 }
