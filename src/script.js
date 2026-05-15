@@ -176,11 +176,14 @@ function activateView(target){
     }
 }
 
-function movePillTo(button){
-
-    pill.style.transform =
-        `translateX(${button.offsetLeft - 4}px)`;
+function movePillTo(button) {
+    // Verschiebung berechnen (-4 wegen des 4px Paddings vom Container)
+    pill.style.transform = `translateX(${button.offsetLeft - 4}px)`;
+    
+    // Breite der Pille exakt an den Button anpassen
+    pill.style.width = `${button.offsetWidth}px`;
 }
+
 
 buttons.forEach(button => {
 
