@@ -46,30 +46,31 @@ const daysInMonth =
    MONTH GRID BUILD
 ========================================================= */
 
-for(let i = 1; i <= 42; i++){
+const firstDayIndex =
+    (new Date(CURRENT_YEAR, CURRENT_MONTH, 1).getDay() + 6) % 7;
+
+for(let i = 0; i < 42; i++){
 
     const cell =
         document.createElement('div');
 
-    const level =
-        randomLevel();
+    const dayNumber =
+        i - firstDayIndex + 1;
 
-    cell.className =
-        `cell l${level}`;
+    const isRealDay =
+        dayNumber >= 1 && dayNumber <= daysInMonth;
 
-    /* ---------------- REAL DAYS ---------------- */
+    if(isRealDay){
 
-    if(i <= daysInMonth){
+        cell.className =
+            `cell l${randomLevel()}`;
 
-        cell.dataset.day = i;
+        cell.dataset.day = dayNumber;
     }
-
-    /* ---------------- FADED DAYS ---------------- */
 
     else{
 
-        cell.style.opacity = '.18';
-        cell.style.filter  = 'saturate(.2)';
+        cell.className = 'cell cell-empty';
     }
 
     monthGrid.appendChild(cell);
@@ -121,7 +122,7 @@ buttons.forEach((button, index) => {
         /* ---------------- MOVE PILL ---------------- */
 
         pill.style.transform =
-            `translateX(${index * 90}px)`;
+            `translateX(${button.offsetLeft - 4}px)`;
 
         /* ---------------- TARGET VIEW ---------------- */
 
@@ -140,3 +141,9 @@ buttons.forEach((button, index) => {
         targetView.classList.add('active');
     });
 });
+
+/* init pill alignment */
+const activeButton = document.querySelector('.toggle button.active');
+if(activeButton){
+    pill.style.transform = `translateX(${activeButton.offsetLeft - 4}px)`;
+}
