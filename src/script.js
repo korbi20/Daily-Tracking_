@@ -42,14 +42,22 @@ const daysInMonth =
         0
     ).getDate();
 
+const firstDayIndex =
+    (new Date(CURRENT_YEAR, CURRENT_MONTH, 1).getDay() + 6) % 7;
+
+const monthWeeks =
+    Math.ceil((firstDayIndex + daysInMonth) / 7);
+
+monthGrid.style.setProperty(
+    '--month-weeks',
+    monthWeeks
+);
+
 /* =========================================================
    MONTH GRID BUILD
 ========================================================= */
 
-const firstDayIndex =
-    (new Date(CURRENT_YEAR, CURRENT_MONTH, 1).getDay() + 6) % 7;
-
-for(let i = 0; i < 42; i++){
+for(let i = 0; i < monthWeeks * 7; i++){
 
     const cell =
         document.createElement('div');
@@ -83,13 +91,43 @@ for(let i = 0; i < 42; i++){
 const yearGrid =
     document.getElementById('year-grid');
 
-for(let i = 0; i < 371; i++){
+const daysInYear =
+    new Date(CURRENT_YEAR, 12, 0).getDate();
+
+const yearFirstDayIndex =
+    (new Date(CURRENT_YEAR, 0, 1).getDay() + 6) % 7;
+
+const yearWeeks =
+    Math.ceil((yearFirstDayIndex + daysInYear) / 7);
+
+yearGrid.style.setProperty(
+    '--year-weeks',
+    yearWeeks
+);
+
+for(let i = 0; i < yearWeeks * 7; i++){
+
+    const dayOfYear =
+        i - yearFirstDayIndex + 1;
+
+    const isRealDay =
+        dayOfYear >= 1 && dayOfYear <= daysInYear;
 
     const cell =
         document.createElement('div');
 
-    cell.className =
-        `year-cell l${randomLevel()}`;
+    if(isRealDay){
+
+        cell.className =
+            `year-cell l${randomLevel()}`;
+
+        cell.dataset.dayOfYear = dayOfYear;
+    }
+
+    else{
+
+        cell.className = 'year-cell cell-empty';
+    }
 
     yearGrid.appendChild(cell);
 }

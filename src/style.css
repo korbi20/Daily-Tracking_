@@ -256,7 +256,7 @@ body{
     display:grid;
 
     grid-template-columns:
-        repeat(5, var(--cell));
+        repeat(var(--month-weeks, 6), var(--cell));
 
     grid-template-rows:
         repeat(7, var(--cell));
@@ -323,7 +323,7 @@ body{
     display:grid;
 
     grid-template-columns:
-        repeat(53, 12px);
+        repeat(var(--year-weeks, 53), 12px);
 
     grid-template-rows:
         repeat(7, 12px);
