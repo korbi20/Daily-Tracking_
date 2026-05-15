@@ -140,7 +140,7 @@ body{
     position:absolute;
     inset:0;
 
-    display:flex;
+    display:none;
     justify-content:center;
     align-items:center;
 
@@ -162,6 +162,7 @@ body{
 
 .view.active{
 
+    display:flex;
     opacity:1;
 
     transform:

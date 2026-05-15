@@ -121,7 +121,7 @@ buttons.forEach((button, index) => {
         /* ---------------- MOVE PILL ---------------- */
 
         pill.style.transform =
-            `translateX(${index * 90}px)`;
+            `translateX(${button.offsetLeft - 4}px)`;
 
         /* ---------------- TARGET VIEW ---------------- */
 
@@ -140,3 +140,9 @@ buttons.forEach((button, index) => {
         targetView.classList.add('active');
     });
 });
+
+/* init pill alignment */
+const activeButton = document.querySelector('.toggle button.active');
+if(activeButton){
+    pill.style.transform = `translateX(${activeButton.offsetLeft - 4}px)`;
+}
