@@ -1,158 +1,357 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-
     <meta charset="UTF-8" />
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"/>
-
-    <title>Activity Tracker</title>
-
-    <link
-        rel="stylesheet"
-        href="src/style.css"/>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily-Tracker_</title>
+    <link rel="stylesheet" href="src/style.css" />
 </head>
-
 <body>
 
 <div class="app">
 
     <!-- TOP -->
-
     <div class="topbar">
 
+        <!-- Theme -->
+        <svg id="theme-toggle" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <title>Theme wechseln</title>
+            <path d="M11 17a4 4 0 0 1-8 0V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2Z"/>
+            <path d="M16.7 13H19a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H7"/>
+            <path d="M 7 17h.01"/>
+            <path d="m11 8 2.3-2.3a2.4 2.4 0 0 1 3.404.004L18.6 7.6a2.4 2.4 0 0 1 .026 3.434L9.9 19.8"/>
+        </svg>
+        <div id="theme-name">Serika Dark</div>
+
+        <!-- View Toggle -->
         <div class="toggle">
-
             <div class="toggle-pill"></div>
-
-            <button
-                class="active"
-                data-view="month">
-
-                Monat
-
-            </button>
-
-            <button
-                data-view="year">
-
-                Jahr
-
-            </button>
-
+            <button class="active" data-view="month">Monat</button>
+            <button data-view="year">Jahr</button>
         </div>
 
     </div>
 
     <!-- VIEWS -->
-
     <div class="views">
 
         <!-- MONTH -->
-
-        <div
-            class="view active"
-            id="month-view">
-
+        <div class="view active" id="month-view">
             <div class="month-content">
 
                 <div class="month-header">
-
-                    <div class="month-title">
-                        Mai 2026
+                    <div class="month-nav">
+                        <button class="nav-btn" id="month-prev">←</button>
+                        <div class="month-title" id="month-title">Mai 2026</div>
+                        <button class="nav-btn" id="month-next">→</button>
                     </div>
-
-                    <div class="month-sub">
-                        74 Aktivitäten
-                    </div>
-
+                    <div class="month-sub" id="month-sub">— Aktivitäten</div>
                 </div>
 
                 <div class="month-grid-wrap">
-
                     <div class="weekdays">
-
-                        <span>Mo</span>
-                        <span>Di</span>
-                        <span>Mi</span>
-                        <span>Do</span>
-                        <span>Fr</span>
-                        <span>Sa</span>
-                        <span>So</span>
-
+                        <span>Mo</span><span>Di</span><span>Mi</span>
+                        <span>Do</span><span>Fr</span><span>Sa</span><span>So</span>
                     </div>
+                    <div class="month-grid" id="month-grid"></div>
+                </div>
 
-                    <div
-                        class="month-grid"
-                        id="month-grid">
-
+                <!-- Stats unter Monat -->
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-value" id="stat-streak">0</div>
+                        <div class="stat-label">Streak</div>
                     </div>
-
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <div class="stat-value" id="stat-total">0</div>
+                        <div class="stat-label">Total Days</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <div class="stat-value" id="stat-longest">0</div>
+                        <div class="stat-label">Longest</div>
+                    </div>
                 </div>
 
             </div>
-
         </div>
 
         <!-- YEAR -->
-
-        <div
-            class="view"
-            id="year-view">
-
+        <div class="view" id="year-view">
             <div class="year-content">
 
-                <div class="month-labels">
+                <div class="year-nav">
+                    <button class="nav-btn" id="year-prev">←</button>
+                    <div class="year-label" id="year-label">2026</div>
+                    <button class="nav-btn" id="year-next">→</button>
+                </div>
 
-                    <span>Jan</span>
-                    <span>Feb</span>
-                    <span>Mär</span>
-                    <span>Apr</span>
-                    <span>Mai</span>
-                    <span>Jun</span>
-                    <span>Jul</span>
-                    <span>Aug</span>
-                    <span>Sep</span>
-                    <span>Okt</span>
-                    <span>Nov</span>
-                    <span>Dez</span>
-
+                <div class="month-labels" id="month-labels">
+                    <span>Jan</span><span>Feb</span><span>Mär</span><span>Apr</span>
+                    <span>Mai</span><span>Jun</span><span>Jul</span><span>Aug</span>
+                    <span>Sep</span><span>Okt</span><span>Nov</span><span>Dez</span>
                 </div>
 
                 <div class="year-wrap">
-
                     <div class="year-days">
-
-                        <span>Mo</span>
-                        <span></span>
-                        <span>Mi</span>
-                        <span></span>
-                        <span>Fr</span>
-                        <span></span>
-                        <span>So</span>
-
+                        <span>Mo</span><span></span><span>Mi</span>
+                        <span></span><span>Fr</span><span></span><span>So</span>
                     </div>
-
-                    <div
-                        class="year-grid"
-                        id="year-grid">
-
-                    </div>
-
+                    <div class="year-grid" id="year-grid"></div>
                 </div>
 
             </div>
-
         </div>
 
     </div>
-
 </div>
 
-<script src="src/script.js"></script>
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- Reset Overlay — Konami Code ↑↑↓↓←→←→ -->
+<div id="reset-overlay">
+    <div class="reset-box">
+        <div class="reset-title">⚠ Reset all data</div>
+        <div class="reset-sub">
+            Alle Tracking-Daten werden gelöscht.<br>
+            Diese Aktion kann nicht rückgängig gemacht werden.
+        </div>
+        <div class="reset-actions">
+            <button class="reset-btn confirm" id="reset-confirm">Reset</button>
+            <button class="reset-btn cancel"  id="reset-cancel">Abbrechen</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import {
+    recordVisit, getData, dayScore, activeHours,
+    daysInMonth, daysInYear,
+    calcStreak, calcLongestStreak, calcTotalDays, calcMonthActivity,
+    resetData, todayKey
+} from './src/tracker.js';
+
+// ── STATE ──────────────────────────────────────────────
+const NOW = new Date();
+let trackerData  = {};
+let monthOffset  = 0;   // Monate von heute
+let yearOffset   = 0;   // Jahre von heute
+let currentView  = 'month';
+
+// ── TOOLTIP ────────────────────────────────────────────
+const tooltipEl = document.getElementById('tooltip');
+
+function showTip(e, text) {
+    tooltipEl.textContent = text;
+    tooltipEl.classList.add('visible');
+    moveTip(e);
+}
+function moveTip(e) {
+    tooltipEl.style.left = (e.clientX + 14) + 'px';
+    tooltipEl.style.top  = (e.clientY - 32) + 'px';
+}
+function hideTip() { tooltipEl.classList.remove('visible'); }
+
+// ── CELL BUILDER ───────────────────────────────────────
+function makeCell(dateKey, isYearView = false) {
+    const cell = document.createElement('div');
+    cell.className = isYearView ? 'year-cell' : 'cell';
+
+    const slots  = trackerData[dateKey];
+    const score  = dayScore(slots);
+    const hours  = activeHours(slots);
+
+    cell.classList.add(`l${score}`);
+    if (dateKey === todayKey()) cell.classList.add('today');
+
+    const label = hours > 0
+        ? `${dateKey} — ${hours}h aktiv`
+        : `${dateKey} — kein Besuch`;
+
+    cell.addEventListener('mousemove', e => { showTip(e, label); moveTip(e); });
+    cell.addEventListener('mouseleave', hideTip);
+
+    return cell;
+}
+
+function makeEmpty(isYearView = false) {
+    const cell = document.createElement('div');
+    cell.className = isYearView ? 'year-cell cell-empty' : 'cell cell-empty';
+    return cell;
+}
+
+// ── MONTH RENDER ───────────────────────────────────────
+function renderMonth() {
+    const d = new Date(NOW.getFullYear(), NOW.getMonth() + monthOffset, 1);
+    const y = d.getFullYear();
+    const m = d.getMonth();
+
+    const monthKey = `${y}-${String(m + 1).padStart(2, '0')}`;
+    const days     = daysInMonth(monthKey);
+    const dCount   = days.length;
+
+    // Wochentag des 1. (Mo=0 … So=6)
+    const firstDow    = (new Date(y, m, 1).getDay() + 6) % 7;
+    const monthWeeks  = Math.ceil((firstDow + dCount) / 7);
+
+    // Header
+    const monthName = d.toLocaleString('de-DE', { month: 'long' });
+    document.getElementById('month-title').textContent = `${monthName} ${y}`;
+    const activity = calcMonthActivity(trackerData, monthKey);
+    document.getElementById('month-sub').textContent =
+        `${activity} Aktivitäten`;
+
+    // Grid
+    const grid = document.getElementById('month-grid');
+    grid.innerHTML = '';
+
+    // Leerzellen als Padding (Mo=0 … So=6)
+    for (let i = 0; i < firstDow; i++) grid.appendChild(makeEmpty(false));
+
+    // Tage chronologisch — grid-auto-flow:column macht den Rest
+    days.forEach(dateKey => grid.appendChild(makeCell(dateKey, false)));
+}
+
+// ── YEAR RENDER ────────────────────────────────────────
+function renderYear() {
+    const year = NOW.getFullYear() + yearOffset;
+    document.getElementById('year-label').textContent = String(year);
+
+    const allDays  = daysInYear(year);
+    const dayCount = allDays.length;
+
+    const firstDow   = (new Date(year, 0, 1).getDay() + 6) % 7;
+    const yearWeeks  = Math.ceil((firstDow + dayCount) / 7);
+
+    const grid = document.getElementById('year-grid');
+    grid.innerHTML = '';
+
+    // Leerzellen als Padding
+    for (let i = 0; i < firstDow; i++) grid.appendChild(makeEmpty(true));
+
+    // Tage chronologisch
+    allDays.forEach(dateKey => grid.appendChild(makeCell(dateKey, true)));
+}
+
+// ── STATS ──────────────────────────────────────────────
+function renderStats() {
+    document.getElementById('stat-streak').textContent  = calcStreak(trackerData);
+    document.getElementById('stat-total').textContent   = calcTotalDays(trackerData);
+    document.getElementById('stat-longest').textContent = calcLongestStreak(trackerData);
+}
+
+// ── FULL RENDER ────────────────────────────────────────
+function render() {
+    if (currentView === 'month') renderMonth();
+    else                         renderYear();
+    renderStats();
+}
+
+// ── VIEW TOGGLE ────────────────────────────────────────
+const buttons = document.querySelectorAll('.toggle button');
+const views   = document.querySelectorAll('.view');
+const pill    = document.querySelector('.toggle-pill');
+
+function movePillTo(button) {
+    pill.style.transform = `translateX(${button.offsetLeft - 4}px)`;
+    pill.style.width     = `${button.offsetWidth}px`;
+}
+
+function activateView(target) {
+    currentView = target;
+    views.forEach(v => v.classList.remove('active'));
+    document.getElementById(`${target}-view`).classList.add('active');
+    render();
+}
+
+buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        movePillTo(btn);
+        activateView(btn.dataset.view);
+    });
+});
+
+// Pill init
+const activeBtn = document.querySelector('.toggle button.active') || buttons[0];
+movePillTo(activeBtn);
+
+// ── NAV BUTTONS ────────────────────────────────────────
+document.getElementById('month-prev').onclick = () => { monthOffset--; render(); };
+document.getElementById('month-next').onclick = () => { monthOffset++; render(); };
+document.getElementById('year-prev').onclick  = () => { yearOffset--;  render(); };
+document.getElementById('year-next').onclick  = () => { yearOffset++;  render(); };
+
+// ── THEMES ─────────────────────────────────────────────
+let themes = [], themeIdx = 0;
+
+async function initThemes() {
+    try {
+        const res = await fetch('src/themes.json');
+        themes    = await res.json();
+        themeIdx  = parseInt(localStorage.getItem('tracker-theme')) || 0;
+        applyTheme(themeIdx);
+    } catch (e) {
+        console.warn('themes.json nicht gefunden – Fallback auf Default');
+    }
+}
+
+function applyTheme(idx) {
+    const theme = themes[idx];
+    if (!theme) return;
+    Object.keys(theme).forEach(k => {
+        if (k !== 'name') document.documentElement.style.setProperty(`--${k}`, theme[k]);
+    });
+    // bg auch auf body
+    document.body.style.background = `var(--bg)`;
+    document.getElementById('theme-name').textContent = theme.name;
+    localStorage.setItem('tracker-theme', idx);
+}
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+    if (!themes.length) return;
+    themeIdx = (themeIdx + 1) % themes.length;
+    applyTheme(themeIdx);
+});
+
+// ── KONAMI CODE ────────────────────────────────────────
+const KONAMI  = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+                 'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight'];
+let konamiPos = 0;
+
+document.addEventListener('keydown', e => {
+    konamiPos = (e.key === KONAMI[konamiPos]) ? konamiPos + 1 : 0;
+    if (konamiPos === KONAMI.length) {
+        konamiPos = 0;
+        document.getElementById('reset-overlay').classList.add('visible');
+    }
+});
+
+document.getElementById('reset-confirm').onclick = async () => {
+    await resetData();
+    trackerData = {};
+    document.getElementById('reset-overlay').classList.remove('visible');
+    render();
+};
+
+document.getElementById('reset-cancel').onclick = () => {
+    document.getElementById('reset-overlay').classList.remove('visible');
+};
+
+// ── INIT ───────────────────────────────────────────────
+async function init() {
+    await initThemes();
+    trackerData = await recordVisit();
+    render();
+}
+
+init();
+</script>
 
 </body>
 </html>
