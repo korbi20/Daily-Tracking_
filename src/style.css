@@ -1,14 +1,13 @@
 :root {
     --bg:      #1f2125;
     --text:    #f3f4f6;
-    --muted:   #8b9098;
     --surface: #2a2d32;
 
-    /* Level-Farben — werden via JS durch --main ersetzt wenn Theme aktiv */
-    --l0: #2f3136;
-    --l1: color-mix(in srgb, var(--main, #e2b714) 28%, #2f3136);
-    --l2: color-mix(in srgb, var(--main, #e2b714) 52%, #2f3136);
-    --l3: color-mix(in srgb, var(--main, #e2b714) 76%, #2f3136);
+    /* Level-Farben — dynamisch gegen --subAlt gemischt */
+    --l0: var(--subAlt, #2c2e31);
+    --l1: color-mix(in srgb, var(--main, #e2b714) 25%, var(--subAlt, #2c2e31));
+    --l2: color-mix(in srgb, var(--main, #e2b714) 50%, var(--subAlt, #2c2e31));
+    --l3: color-mix(in srgb, var(--main, #e2b714) 75%, var(--subAlt, #2c2e31));
     --l4: var(--main, #e2b714);
 
     /* QR-Maker kompatible Variablen */
@@ -59,7 +58,7 @@ body {
 #theme-toggle {
     width: 20px;
     height: 20px;
-    color: var(--muted);
+    color: var(--sub);
     cursor: pointer;
     transition: color 0.2s ease;
     flex-shrink: 0;
@@ -69,7 +68,7 @@ body {
 #theme-name {
     font-size: 0.7rem;
     letter-spacing: 1.5px;
-    color: var(--muted);
+    color: var(--sub);
     text-transform: uppercase;
     white-space: nowrap;
 }
@@ -79,10 +78,9 @@ body {
     position: relative;
     display: flex;
     gap: 4px;
-    background: rgba(255,255,255,.04);
+    background: var(--subAlt);
     padding: 4px;
     border-radius: 999px;
-    backdrop-filter: blur(12px);
 }
 
 .toggle-pill {
@@ -91,7 +89,8 @@ body {
     left: 4px;
     height: calc(100% - 8px);
     border-radius: 999px;
-    background: rgba(255,255,255,.08);
+    background: var(--sub);
+    opacity: 0.4;
     pointer-events: none;
     transition: transform .28s cubic-bezier(.2,.8,.2,1), width .28s cubic-bezier(.2,.8,.2,1);
 }
@@ -101,7 +100,7 @@ body {
     z-index: 2;
     border: none;
     background: transparent;
-    color: var(--muted);
+    color: var(--sub);
     padding: 9px 18px;
     border-radius: 999px;
     cursor: pointer;
@@ -168,7 +167,6 @@ body {
     margin-bottom: 34px;
 }
 
-/* Nav row */
 .month-nav {
     display: flex;
     align-items: center;
@@ -180,7 +178,7 @@ body {
 .nav-btn {
     background: none;
     border: none;
-    color: var(--muted);
+    color: var(--sub);
     cursor: pointer;
     font-size: 1rem;
     padding: 4px 10px;
@@ -194,12 +192,13 @@ body {
     font-size: 34px;
     font-weight: 600;
     letter-spacing: -0.03em;
+    color: var(--text);
     margin-bottom: 8px;
 }
 
 .month-sub {
     font-size: 13px;
-    color: var(--muted);
+    color: var(--sub);
 }
 
 .month-grid-wrap {
@@ -212,7 +211,7 @@ body {
     grid-template-rows: repeat(7, var(--cell));
     gap: var(--gap);
     font-size: 12px;
-    color: var(--muted);
+    color: var(--sub);
 }
 
 .weekdays span {
@@ -236,7 +235,6 @@ body {
     align-items: center;
 }
 
-/* Year nav */
 .year-nav {
     display: flex;
     align-items: center;
@@ -263,7 +261,7 @@ body {
 
 .month-labels span {
     font-size: 12px;
-    color: var(--muted);
+    color: var(--sub);
 }
 
 .year-wrap {
@@ -277,7 +275,7 @@ body {
     grid-template-rows: repeat(7, 12px);
     gap: 4px;
     font-size: 11px;
-    color: var(--muted);
+    color: var(--sub);
 }
 
 .year-grid {
@@ -315,14 +313,14 @@ body {
 .stat-label {
     font-size: 0.6rem;
     letter-spacing: 2px;
-    color: var(--muted);
+    color: var(--sub);
     text-transform: uppercase;
 }
 
 .stat-divider {
     width: 1px;
     height: 28px;
-    background: var(--subAlt, #2c2e31);
+    background: var(--subAlt);
 }
 
 /* ── CELLS ── */
@@ -340,7 +338,7 @@ body {
 .year-cell:hover {
     transform: scale(1.18);
     z-index: 4;
-    box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 0 16px rgba(255,255,255,.08);
+    box-shadow: 0 0 0 1px var(--sub), 0 0 12px color-mix(in srgb, var(--main) 30%, transparent);
 }
 
 /* Heute-Marker */
@@ -354,21 +352,23 @@ body {
 .l1 { background: var(--l1); }
 .l2 { background: var(--l2); }
 .l3 { background: var(--l3); }
-.l4 { background: var(--l4); box-shadow: 0 0 10px color-mix(in srgb, var(--main) 40%, transparent); }
+.l4 { background: var(--l4); box-shadow: 0 0 8px color-mix(in srgb, var(--main) 35%, transparent); }
 
+/* Padding-Leerzellen */
 .cell-empty {
     background: transparent;
-    opacity: .20;
-    border: 1px solid rgba(255,255,255,.08);
+    opacity: 0;
+    border: none;
     box-shadow: none;
+    pointer-events: none;
 }
 .cell-empty:hover { transform: none; box-shadow: none; }
 
 /* ── TOOLTIP ── */
 .tooltip {
     position: fixed;
-    background: var(--surface, #2a2d32);
-    border: 1px solid rgba(255,255,255,.08);
+    background: var(--subAlt);
+    border: 1px solid var(--sub);
     color: var(--text);
     font-size: 0.65rem;
     letter-spacing: 1px;
@@ -402,7 +402,7 @@ body {
 
 .reset-box {
     background: var(--bg);
-    border: 1px solid var(--error, #ca4754);
+    border: 1px solid var(--error);
     border-radius: 12px;
     padding: 32px 40px;
     display: flex;
@@ -415,13 +415,13 @@ body {
 .reset-title {
     font-size: 0.7rem;
     letter-spacing: 3px;
-    color: var(--error, #ca4754);
+    color: var(--error);
     text-transform: uppercase;
 }
 
 .reset-sub {
     font-size: 0.75rem;
-    color: var(--muted);
+    color: var(--sub);
     letter-spacing: 0.5px;
     line-height: 1.6;
 }
@@ -453,8 +453,8 @@ body {
 
 .reset-btn.cancel {
     background: none;
-    border-color: var(--muted);
-    color: var(--muted);
+    border-color: var(--sub);
+    color: var(--sub);
 }
 .reset-btn.cancel:hover {
     border-color: var(--text);
