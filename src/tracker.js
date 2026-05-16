@@ -5,6 +5,13 @@
 
 export const STORAGE_KEY = "daily-tracker-data";
 
+function toLocalDateKey(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+}
+
 // Storage-Adapter: Claude Artifact Storage (prod) → localStorage (dev)
 const storage = {
     async get(key) {
@@ -19,7 +26,7 @@ const storage = {
 };
 
 export function todayKey() {
-    return new Date().toISOString().slice(0, 10);
+    return toLocalDateKey(new Date());
 }
 
 function currentHour() {
@@ -43,6 +50,7 @@ export async function recordVisit() {
 
     if (!data[today]) data[today] = new Array(24).fill(0);
     data[today][hour] = 1;
+    console.log(`[daily-tracker] Aktivität getriggert: ${today} um ${String(hour).padStart(2, "0")}:00`);
 
     try {
         await storage.set(STORAGE_KEY, JSON.stringify(data));
@@ -97,7 +105,7 @@ export function calcStreak(data) {
     for (let i = 0; i < 365; i++) {
         const d = new Date(today);
         d.setDate(today.getDate() - i);
-        const key = d.toISOString().slice(0, 10);
+        const key = toLocalDateKey(d);
         if (data[key] && dayScore(data[key]) > 0) streak++;
         else break;
     }
