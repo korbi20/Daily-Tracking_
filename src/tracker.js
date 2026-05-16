@@ -5,6 +5,19 @@
 
 export const STORAGE_KEY = "daily-tracker-data";
 
+// Storage-Adapter: Claude Artifact Storage (prod) → localStorage (dev)
+const storage = {
+    async get(key) {
+        if (window.storage?.get) return window.storage.get(key);
+        const val = localStorage.getItem(key);
+        return val ? { value: val } : null;
+    },
+    async set(key, value) {
+        if (window.storage?.set) return window.storage.set(key, value);
+        localStorage.setItem(key, value);
+    }
+};
+
 export function todayKey() {
     return new Date().toISOString().slice(0, 10);
 }
@@ -15,7 +28,7 @@ function currentHour() {
 
 export async function getData() {
     try {
-        const result = await window.storage.get(STORAGE_KEY);
+        const result = await storage.get(STORAGE_KEY);
         return result ? JSON.parse(result.value) : {};
     } catch {
         return {};
@@ -32,7 +45,7 @@ export async function recordVisit() {
     data[today][hour] = 1;
 
     try {
-        await window.storage.set(STORAGE_KEY, JSON.stringify(data));
+        await storage.set(STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
         console.error("[daily-tracker] Storage error:", e);
     }
@@ -125,7 +138,7 @@ export function calcMonthActivity(data, yearMonth) {
 
 export async function resetData() {
     try {
-        await window.storage.set(STORAGE_KEY, JSON.stringify({}));
+        await storage.set(STORAGE_KEY, JSON.stringify({}));
     } catch (e) {
         console.error("[daily-tracker] Reset error:", e);
     }
