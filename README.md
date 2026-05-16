@@ -39,6 +39,10 @@ Then open: `http://localhost:8080`
     ```
 </details>
 
+## Demo
+
+GitHub Pages: https://korbi20.github.io/QR-Maker_/
+
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See [`LICENSE`](LICENSE).
