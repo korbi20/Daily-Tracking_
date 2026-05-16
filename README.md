@@ -41,7 +41,7 @@ Then open: `http://localhost:8080`
 
 ## Demo
 
-GitHub Pages: https://korbi20.github.io/QR-Maker_/
+GitHub Pages: https://korbi20.github.io/Daily-Tracking_/
 
 ## License
 
